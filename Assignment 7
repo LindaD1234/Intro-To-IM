@@ -1,0 +1,36 @@
+int digitalLED = 8;     // LED with digital on/off control
+int analogLED = 11;       // LED with analog brightness control
+int LDR = A2;            // Analog light sensor
+int buttonPin = 7;       // Digital switch
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(digitalLED, OUTPUT);
+  pinMode(analogLED, OUTPUT);
+  pinMode(LDR, INPUT);
+  pinMode(buttonPin, INPUT_PULLUP);  // Setup for a digital switch with internal pull-up
+}
+
+void loop() {
+  int LDRValue = analogRead(LDR);
+  int buttonState = digitalRead(buttonPin);
+
+  Serial.print("sensor = ");
+  Serial.print(LDRValue);
+
+  if (buttonState == LOW) {  // Button is pressed (if using INPUT_PULLUP)
+    if (LDRValue <= 900) {
+      digitalWrite(digitalLED, HIGH);              // Turn on digital LED
+      analogWrite(analogLED, map(LDRValue, 0, 900, 255, 0));  // Adjust brightness of analog LED
+      Serial.println("Wait for the Flash!");
+    } else {
+      digitalWrite(digitalLED, LOW);               // Turn off digital LED
+      analogWrite(analogLED, 0);                   // Turn off analog LED
+      Serial.println("Smile!");
+    }
+  } else {
+    digitalWrite(digitalLED, LOW);                 // LED off if button not pressed
+    analogWrite(analogLED, 0);                     // LED off if button not pressed
+    Serial.println("Take a picture by pressing the button.");
+  }
+}
